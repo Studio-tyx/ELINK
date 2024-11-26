@@ -16,6 +16,6 @@ the generator will start to produce message data to local kafka breaker at _kafk
 
 To start a ELINK client that consumes and processes the data on a node, run:
 ```
-docker compose exec jobmanager ./bin/flink run -py /opt/pyflink-walkthrough/workdir/riot-benchmark/bolt/PRED.py -d
+docker compose exec jobmanager ./bin/flink run -py /opt/pyflink-walkthrough/workdir/riot-benchmark/bolt/PRED_edge.py -d
 ```
 this will commit a job to Flink CLI， which is expected to process data in PRED dataflow from Riot-benchmark
