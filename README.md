@@ -14,7 +14,7 @@ docker compose exec kafka kafka-console-consumer.sh --bootstrap-server kafka:909
 
 the generator will start to produce message data to local kafka breaker at _kafka:9092_ under the topic _SYS_ .
 
-To start a ELINK client that consumes and processes the data on a node, run:
+To start an ELINK client that consumes and processes the data on a node, run:
 ```
 docker compose exec jobmanager ./bin/flink run -py /opt/pyflink-walkthrough/workdir/riot-benchmark/bolt/PRED_edge.py -d
 ```
