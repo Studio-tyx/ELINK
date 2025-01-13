@@ -345,7 +345,6 @@ _gviz = GroupVIZ()
 _avg = Average()
 
 # case pure cloud
-'''
 source = KafkaSource.builder() \
         .set_bootstrap_servers('kafka:9092') \
         .set_topics('SYS') \
@@ -377,42 +376,41 @@ ds3 = ds1.union(ds2) \
          .map(lambda i : (i[2], time.time() - i[3]))
 
 ds3.print()
-'''
 
 # case edge-cloud
-source1 = KafkaSource.builder() \
-        .set_bootstrap_servers('kafka:9092') \
-        .set_topics('STAT1') \
-        .set_value_only_deserializer(SimpleStringSchema()) \
-        .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
-        .build()
+# source1 = KafkaSource.builder() \
+#         .set_bootstrap_servers('kafka:9092') \
+#         .set_topics('STAT1') \
+#         .set_value_only_deserializer(SimpleStringSchema()) \
+#         .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
+#         .build()
         
-source2 = KafkaSource.builder() \
-        .set_bootstrap_servers('kafka:9092') \
-        .set_topics('STAT2') \
-        .set_value_only_deserializer(SimpleStringSchema()) \
-        .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
-        .build()
-ds1 = env.from_source(source1, WatermarkStrategy.no_watermarks(), "Kafka Source")
-ds2 = env.from_source(source2, WatermarkStrategy.no_watermarks(), "Kafka Source")
+# source2 = KafkaSource.builder() \
+#         .set_bootstrap_servers('kafka:9092') \
+#         .set_topics('STAT2') \
+#         .set_value_only_deserializer(SimpleStringSchema()) \
+#         .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
+#         .build()
+# ds1 = env.from_source(source1, WatermarkStrategy.no_watermarks(), "Kafka Source")
+# ds2 = env.from_source(source2, WatermarkStrategy.no_watermarks(), "Kafka Source")
 
-def map_ec(i):
-    start = time.time()
-    i = eval(i)
-    return (i['MSGID'], i['SENSORID'], i['META'], i['OBSTYPE'], i['OBSVAL'], time.time() - i['TRANS'], time.time())
+# def map_ec(i):
+#     start = time.time()
+#     i = eval(i)
+#     return (i['MSGID'], i['SENSORID'], i['META'], i['OBSTYPE'], i['OBSVAL'], time.time() - i['TRANS'], time.time())
     
-ds1 = ds1.map(lambda i : map_ec(i)) \
-        .rebalance() \
-        .filter(lambda i : True if i is not None else False)  
+# ds1 = ds1.map(lambda i : map_ec(i)) \
+#         .rebalance() \
+#         .filter(lambda i : True if i is not None else False)  
         
-ds2 = ds2.map(lambda i : map_ec(i)) \
-         .rebalance()
+# ds2 = ds2.map(lambda i : map_ec(i)) \
+#          .rebalance()
             
-ds = ds1.union(ds2) \
-        .map(lambda i : _gviz.gviz(i)) \
-        .filter(lambda i : True if i is not None else False) \
-        .map(lambda i : (i[2], time.time() - i[3]))
+# ds = ds1.union(ds2) \
+#         .map(lambda i : _gviz.gviz(i)) \
+#         .filter(lambda i : True if i is not None else False) \
+#         .map(lambda i : (i[2], time.time() - i[3]))
 
-ds.print()
+# ds.print()
 
 env.execute()

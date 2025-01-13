@@ -23,14 +23,20 @@ ENV PATH=${PATH}:${KAFKA_HOME}/bin
 COPY download-kafka.sh start-kafka.sh broker-list.sh create-topics.sh versions.sh /tmp2/
 
 RUN set -eux ; \
+    cat /etc/apt/sources.list ;\
+    echo \
+    "deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib \
+    deb https://mirrors.aliyun.com/debian-security/ bullseye-security main \
+    deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib \
+    deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib" | tee /etc/apt/sources.list ;\
     apt-get update ; \
     apt-get upgrade -y ; \
     apt-get install -y --no-install-recommends jq net-tools curl wget ; \
 ### BEGIN docker for CI tests
     apt-get install -y --no-install-recommends gnupg lsb-release ; \
-	curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg ; \
+	curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg ; \
 	echo \
-  		"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+  		"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian/ \
   		$(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null ; \
     apt-get update ; \
     apt-get install -y --no-install-recommends docker-ce-cli ; \
@@ -52,7 +58,7 @@ RUN set -eux ; \
     rm -rf /tmp2 ; \
     rm -rf /var/lib/apt/lists/*
     
-RUN echo "advertised.listeners=PLAINTEXT://192.168.126.128:9092" >> /opt/kafka/config/server.properties;
+RUN echo "advertised.listeners=PLAINTEXT://10.214.131.197:9092" >> /opt/kafka/config/server.properties;
 
 COPY overrides /opt/overrides
 

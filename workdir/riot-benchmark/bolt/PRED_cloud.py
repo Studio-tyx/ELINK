@@ -239,7 +239,7 @@ from paho.mqtt import client as mqtt_client
 
 class MQTTPublish:
     def __init__(self):
-        self.broker = '10.192.232.252'
+        self.broker = '10.214.131.197'
         self.port = 1883
         self.topic = "/python/mqtt"
         self.client_id = f'python-mqtt-{random.randint(0, 1000)}'
@@ -289,7 +289,7 @@ config = Configuration(j_configuration=get_j_env_configuration(env._j_stream_exe
 config.set_integer("python.fn-execution.bundle.time", 1)
 env.set_runtime_mode(RuntimeExecutionMode.STREAMING)
 #env.set_buffer_timeout(1)
-env.set_parallelism(8)
+env.set_parallelism(1)
 
 # ETL topology: SenMLParse -> KalmanFilter -> SlingdingLinearReg -> GroupVIZ -> sink
 #                          -> Average -> GroupVIZ -> sink
@@ -302,15 +302,16 @@ _error_estimation = ErrorEstimation()
 _mqtt_publish = MQTTPublish()
 
 # case pure cloud
-'''
+# '''
 source = KafkaSource.builder() \
         .set_bootstrap_servers('kafka:9092') \
-        .set_topics('PRED1') \
+        .set_topics('SYS') \
         .set_value_only_deserializer(SimpleStringSchema()) \
         .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
         .build()
 
 ds = env.from_source(source, WatermarkStrategy.no_watermarks(), "Kafka Source")
+print(ds)
 # SenMLParse
 ds = ds.map(lambda i : map_func(i)) \
        .rebalance() \
@@ -334,33 +335,34 @@ ds_to_estimating = ds_to_estimating.map(lambda i : _error_estimation.estimation(
 				   .map(lambda i : (i[5], time.time() - i[6], 'linear'))
 ds_final = ds1.union(ds_to_estimating)
 ds_final.print()
-'''
+# '''
 
 # case edge-cloud
 
-source1 = KafkaSource.builder() \
-        .set_bootstrap_servers('kafka:9092') \
-        .set_topics('PRED1') \
-        .set_value_only_deserializer(SimpleStringSchema()) \
-        .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
-        .build()
+# source1 = KafkaSource.builder() \
+#         .set_bootstrap_servers('kafka:9092') \
+#         .set_topics('PRED1') \
+#         .set_value_only_deserializer(SimpleStringSchema()) \
+#         .set_starting_offsets(KafkaOffsetsInitializer.latest()) \
+#         .build()
 
-ds = env.from_source(source1, WatermarkStrategy.no_watermarks(), "Kafka Source")
+# ds = env.from_source(source1, WatermarkStrategy.no_watermarks(), "Kafka Source")
 
-def map_ec(i):
-    start = time.time()
-    i = eval(i)
-    return (i['V1'], i['V2'],i['V3'], i['V4'], i['V5'], i['V6'], i['V7'], time.time() - i['V8'], start)  
+# def map_ec(i):
+#     start = time.time()
+#     i = eval(i)
+#     return (i['V1'], i['V2'],i['V3'], i['V4'], i['V5'], i['V6'], i['V7'], time.time() - i['V8'], start)  
 
-def map_ecd(i):
-    start = time.time()
-    i = eval(i)
-    return (i['V1'], i['V2'], i['V3'], i['V4'], i['V5'], time.time() - i['V6'], start)
+# def map_ecd(i):
+#     start = time.time()
+#     i = eval(i)
+#     return (i['V1'], i['V2'], i['V3'], i['V4'], i['V5'], time.time() - i['V6'], start)
 
-ds = ds.map(lambda i : map_ec(i)) \
-       .rebalance() \
-       .map(lambda i : i[7])
-ds.print()
+# ds = ds.map(lambda i : map_ec(i)) \
+#        .rebalance() \
+#        .map(lambda i : i[7])
+# ds.print()
+
 '''
 ds1 = ds.map(lambda i : _avg.average(i)) \
          .filter(lambda i : True if i is not None else False)

@@ -22,10 +22,9 @@ RUN python3 -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/si
     python3 -m pip install apache-flink==${FLINK_VERSION} -i https://pypi.tuna.tsinghua.edu.cn/simple  && \
     python3 -m pip install matplotlib && \
     python3 -m pip install kafka-python && \
+    python3 -m pip install numpy==1.21.4 && \
     python3 -m pip install scikit-learn && \
     python3 -m pip install bloom-filter && \
-    python3 -m pip install bloom_filter && \
-    python3 -m pip install numpy && \
     python3 -m pip install paho-mqtt && \
     python3 -m pip install sklearn-json
     
