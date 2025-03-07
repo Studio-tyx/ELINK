@@ -333,7 +333,7 @@ config = Configuration(j_configuration=get_j_env_configuration(env._j_stream_exe
 config.set_integer("python.fn-execution.bundle.time", 1)
 env.set_runtime_mode(RuntimeExecutionMode.STREAMING)
 #env.set_buffer_timeout(1)
-env.set_parallelism(8)
+env.set_parallelism(1)
 
 # ETL topology: SenMLParse -> KalmanFilter -> SlingdingLinearReg -> GroupVIZ -> sink
 #                          -> Average -> GroupVIZ -> sink
